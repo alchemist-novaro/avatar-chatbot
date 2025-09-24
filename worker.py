@@ -44,11 +44,13 @@ async def entrypoint(ctx: JobContext, avatar_id: Optional[str]) -> None:
 
     await session.start(
         room=ctx.room,
-        agent=Agent(instructions="Start the lesson!"),
+        agent=Agent(instructions=""),
         room_input_options=RoomInputOptions(
             noise_cancellation=noise_cancellation.BVC(),
         ),
     )
+
+    await session.generate_reply(instructions="Start the lesson!")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,8 @@ load_dotenv()
 
 STATIC_ALLOWED_ORIGINS = json.loads(os.getenv("STATIC_ALLOWED_ORIGINS", "[]"))
 LIVEKIT_URL = os.getenv("LIVEKIT_URL", "")
+LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY", "")
+LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET", "")
 
 app = FastAPI(title="Avatar Chatbot")
 
@@ -25,14 +27,14 @@ app.add_middleware(
 @app.get("/token")
 def get_token(identity: str, room: str = "avatar-room"):
     try:    
-        at = api.AccessToken()
+        at = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
         at.with_grants(api.VideoGrants(room_join=True, room=f"{room}-{uuid.uuid4()}"))
         at.with_identity(identity)
         token = at.to_jwt()
 
         return {
-            "token": token,
-            "server_url": LIVEKIT_URL
+            "participantToken": token,
+            "serverUrl": LIVEKIT_URL
         }
     except Exception as e:
         raise HTTPException(
